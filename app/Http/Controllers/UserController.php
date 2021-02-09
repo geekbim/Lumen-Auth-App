@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
-class Controller extends Controller
+class UserController extends Controller
 {
     /**
      * Instantiate a new UserController instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth');
     }
 
@@ -32,7 +31,7 @@ class Controller extends Controller
      * @return Response
      */
     public function allUsers() {
-        return response()->json(['user' => User::all()], 200);
+        return response()->json(['users' => User::all()], 200);
     }
 
     /**
@@ -45,8 +44,8 @@ class Controller extends Controller
             $user = User::findOrFail($id);
 
             return response()->json(['user' => $user], 200);
-        } catch {
-            return response()->json(['message' => 'User not found!', 404]);
+        } catch(\Exception $e) {
+            return response()->json(['message' => 'User not found!'], 404);
         }
     }
 }
