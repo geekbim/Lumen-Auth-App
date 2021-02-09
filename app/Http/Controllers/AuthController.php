@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Http\Request as Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -13,7 +14,7 @@ class AuthController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function register(HttpRequest $request)
+    public function register(Request $request)
     {
         // Validate incoming request
         $this->validate($request, [
@@ -37,5 +38,27 @@ class AuthController extends Controller
             //return error message
             return response()->json(['message' => 'User Registration Failed'], 400);
         }
+    }
+
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function login(Request $request)
+    {
+        $this->validate($request, [
+            'email'     =>  'required|email',
+            'password'  =>  'required|string'
+        ]);
+
+        $credentials = $request->only(['email', 'password']);
+
+        if (!$token = Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Unauthorized'], 400);
+        }
+
+        return $this->respondWithToken($token);
     }
 }
